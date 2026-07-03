@@ -159,19 +159,27 @@
   h1.hero-title{
     font-size:clamp(2.6rem, 7.4vw, 6.4rem);
     display:flex; flex-wrap:wrap; column-gap:.26em; justify-content:center;
-    background:linear-gradient(100deg, var(--charcoal) 30%, var(--terracotta) 48%, var(--sage) 62%, var(--charcoal) 80%);
-    background-size:300% 100%;
-    -webkit-background-clip:text; background-clip:text; 
-    animation:gradientshift 9s ease-in-out infinite;
   }
-  @keyframes gradientshift{ 0%,100%{background-position:0% 50%;} 50%{background-position:100% 50%;} }
   h1.hero-title span.word{overflow:hidden; display:inline-flex;}
   h1.hero-title span.word span{
-    display:inline-block; transform:translateY(110%); animation:rise .95s var(--ease) forwards;
+    display:inline-block; transform:translateY(110%); color:var(--charcoal);
+    animation:rise .95s var(--ease) forwards;
   }
   h1.hero-title span.word:nth-child(1) span{animation-delay:.28s;}
   h1.hero-title span.word:nth-child(2) span{animation-delay:.4s;}
   @keyframes rise{ to{ transform:translateY(0); opacity:1;} from{opacity:0;} }
+  @keyframes gradientshift{ 0%,100%{background-position:0% 50%;} 50%{background-position:100% 50%;} }
+  @supports ((background-clip:text) or (-webkit-background-clip:text)){
+    h1.hero-title span.word span{
+      background:linear-gradient(100deg, var(--charcoal) 30%, var(--terracotta) 48%, var(--sage) 62%, var(--charcoal) 80%);
+      background-size:300% 100%;
+      -webkit-background-clip:text; background-clip:text;
+      color:transparent; -webkit-text-fill-color:transparent;
+      animation:rise .95s var(--ease) forwards, gradientshift 9s ease-in-out infinite;
+    }
+    h1.hero-title span.word:nth-child(1) span{animation-delay:.28s, 0s;}
+    h1.hero-title span.word:nth-child(2) span{animation-delay:.4s, 0s;}
+  }
 
   .hero-signature{
     margin-top:14px; display:flex; align-items:center; justify-content:center; gap:14px;
@@ -469,7 +477,7 @@
       </div>
 
       <div class="hero-photo-frame">
-        <img src="Logo.jpg" alt="Krystian Firszt — fotograf" loading="lazy">
+        <img src="1.jpg" alt="Krystian Firszt — fotograf" loading="lazy">
       </div>
 
       <p class="hero-sub">Fotografia, w której nie chodzi o obiektyw — tylko o to, co przed nim. Portrety, rodziny, śluby i chwile, które chcesz pamiętać dokładnie takimi, jakie były.</p>
@@ -489,7 +497,7 @@
   <section id="about">
     <div class="wrap about">
       <div class="about-photo reveal clip-reveal">
-        <img src="hero3.jpg" style="" alt="Krystian Firszt przy pracy" loading="lazy">
+        <img src="2.jpg" alt="Krystian Firszt przy pracy" loading="lazy">
         <div class="frame-tag">f/1.8 · 50mm · Krystian</div>
       </div>
       <div class="about-text reveal">
@@ -656,9 +664,9 @@
         <div class="eyebrow" style="margin-bottom:18px;">KONTAKT</div>
         <h2 style="margin-bottom:34px;">Porozmawiajmy<br>o Twojej sesji.</h2>
         <div class="info-row"><div class="k">Telefon</div><div class="v"><a href="tel:+48132447112">+48 13 244 71 12</a></div></div>
-        <div class="info-row"><div class="k">E-mail</div><div class="v"><a href="mailto:nieobiektywny.fotografia@gmail.com">nieobiektywny.fotografia@gmail.com</a></div></div>
+        <div class="info-row"><div class="k">E-mail</div><div class="v"><a href="mailto:kontakt@nieobiektywny.pl">kontakt@nieobiektywny.pl</a></div></div>
         <div class="info-row"><div class="k">Studio</div><div class="v">ul. Rynek 14, 38-340 Biecz</div></div>
-        <div class="info-row"><div class="k">Instagram</div><div class="v"><a href="#">@nieobiektywny.fotografia</a></div></div>
+        <div class="info-row"><div class="k">Instagram</div><div class="v"><a href="#">@nieobiektywny.foto</a></div></div>
       </div>
       <form class="reveal" id="contactForm">
         <div class="frow">
@@ -705,8 +713,8 @@
         </div>
         <div class="footer-col">
           <span class="eyebrow">Social</span>
-          <a href="https://www.instagram.com/nieobiektywny.fotografia?igsh=eXNveHdlc3lrNW5y&fbclid=IwZXh0bgNhZW0CMTAAYnJpZBEwTmhQRG5YMlRTM002UUVlTXNydGMGYXBwX2lkEDIyMjAzOTE3ODgyMDA4OTIAAR5exXuXh0VcoF75zl5ytJKVqJr6QnOSk1qoVMXsVSlSwAGGDtUKacshU6HGRg_aem_P6EQ8JPKd6roHg6ZSsETZQ">Instagram</a>
-          <a href="https://www.facebook.com/profile.php?id=61590213030100">Facebook</a>
+          <a href="#">Instagram</a>
+          <a href="#">Facebook</a>
           <a href="#">Pinterest</a>
         </div>
       </div>
@@ -724,10 +732,10 @@
 
 <script>
 // ---------- aperture loader ----------
-(function(){
+try{
   const ns = "http://www.w3.org/2000/svg";
   const g = document.getElementById('blades');
-  const n = 8, r1 = 14, r2 = 58;
+  const n = 8, r2 = 58;
   for(let i=0;i<n;i++){
     const angle = (360/n)*i;
     const p = document.createElementNS(ns,'path');
@@ -740,7 +748,7 @@
   }
   window.addEventListener('load', ()=>{
     setTimeout(()=>{
-      document.querySelectorAll('.blade').forEach((b,i)=>{
+      document.querySelectorAll('.blade').forEach((b)=>{
         b.style.transform += ' scale(0.05)';
         b.style.opacity = '0';
       });
@@ -749,10 +757,11 @@
       }, 500);
     }, 400);
   });
-  // fallback in case load already fired
-  setTimeout(()=>{ document.getElementById('loader').classList.add('hide'); }, 3000);
-})();
+}catch(e){ console.error('loader init failed', e); }
+// hard fallback: always hide loader regardless of above
+setTimeout(()=>{ const l=document.getElementById('loader'); if(l) l.classList.add('hide'); }, 2500);
 
+try{
 // ---------- cursor ring ----------
 (function(){
   const ring = document.getElementById('ring');
@@ -813,6 +822,12 @@ const observer = new IntersectionObserver((entries)=>{
   });
 }, {threshold:.18});
 document.querySelectorAll('.reveal, .reveal-stagger, .clip-reveal').forEach(el=>observer.observe(el));
+}catch(e){ console.error('init failed', e); }
+
+// safety net: force-reveal anything JS missed (script error, observer edge cases)
+setTimeout(()=>{
+  document.querySelectorAll('.reveal, .reveal-stagger, .clip-reveal').forEach(el=>el.classList.add('in'));
+}, 4000);
 
 // ---------- count-up stats ----------
 const countObserver = new IntersectionObserver((entries)=>{

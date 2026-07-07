@@ -922,14 +922,14 @@
         <div class="info-row"><div class="k">Studio</div><div class="v">ul. Rynek 14, 38-340 Biecz</div></div>
         <div class="info-row"><div class="k">Instagram</div><div class="v"><a href="#">@nieobiektywny.foto</a></div></div>
       </div>
-      <form class="reveal" id="contactForm">
+      <form class="reveal" id="contactForm" action="https://formspree.io/f/TWOJ_KOD" method="POST">
         <div class="frow">
-          <div class="field"><input type="text" placeholder=" " required><label>Imię i nazwisko</label></div>
-          <div class="field"><input type="email" placeholder=" " required><label>E-mail</label></div>
+          <div class="field"><input type="text" name="imie" placeholder=" " required><label>Imię i nazwisko</label></div>
+          <div class="field"><input type="email" name="email" placeholder=" " required><label>E-mail</label></div>
         </div>
         <div class="frow">
           <div class="field">
-            <select required>
+            <select name="rodzaj_sesji" required>
               <option value="" disabled selected></option>
               <option>Portret</option>
               <option>Rodzinna</option>
@@ -941,12 +941,13 @@
             </select>
             <label>Rodzaj sesji</label>
           </div>
-          <div class="field"><input type="text" placeholder=" "><label>Preferowany termin</label></div>
+          <div class="field"><input type="text" name="termin" placeholder=" "><label>Preferowany termin</label></div>
         </div>
-        <div class="field"><textarea rows="4" placeholder=" "></textarea><label>Wiadomość</label></div>
+        <div class="field"><textarea name="wiadomosc" rows="4" placeholder=" "></textarea><label>Wiadomość</label></div>
         <p class="form-note">Odpowiadam zwykle w ciągu 24 godzin.</p>
         <button type="submit" class="submit-btn">Wyślij zapytanie</button>
         <div class="success-msg" id="successMsg">✓ Dziękuję! Odezwę się wkrótce.</div>
+        <div class="error-msg" id="errorMsg" style="display:none;color:#b00020;margin-top:10px;">✗ Coś poszło nie tak, spróbuj ponownie lub napisz bezpośrednio na e-mail.</div>
       </form>
     </div>
   </section>
@@ -1291,12 +1292,79 @@ document.getElementById('testPrev').addEventListener('click', ()=>{
 });
 window.addEventListener('resize', updateTest);
 
-// ---------- contact form ----------
+// ---------- contact form (Formspree) ----------
 document.getElementById('contactForm').addEventListener('submit', function(e){
   e.preventDefault();
-  document.getElementById('successMsg').classList.add('show');
-  this.reset();
+  const form = this;
+  const success = document.getElementById('successMsg');
+  const error = document.getElementById('errorMsg');
+  const btn = form.querySelector('.submit-btn');
+  success.classList.remove('show'); error.style.display = 'none';
+  btn.disabled = true;
+
+  fetch(form.action, {
+    method: 'POST',
+    body: new FormData(form),
+    headers: { 'Accept': 'application/json' }
+  }).then(res=>{
+    if(res.ok){
+      success.classList.add('show');
+      form.reset();
+    } else {
+      error.style.display = 'block';
+    }
+  }).catch(()=>{ error.style.display = 'block'; })
+    .finally(()=>{ btn.disabled = false; });
 });
+</script>
+<style>
+#musicToggle{
+  position:fixed; left:20px; bottom:20px; z-index:999; width:46px; height:46px; border-radius:50%;
+  border:1px solid rgba(0,0,0,.15); background:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  box-shadow:0 6px 18px rgba(0,0,0,.15); padding:0;
+}
+@media(max-width:640px){
+  #musicToggle{width:38px; height:38px; left:12px; bottom:12px;}
+  #musicToggle svg{width:15px; height:15px;}
+}
+</style>
+<audio id="bgAudio" src="bg.mp3" loop preload="auto"></audio>
+<button id="musicToggle" aria-label="Włącz/wyłącz muzykę" title="Muzyka">
+  <svg id="musicIcon" width="18" height="18" viewBox="0 0 24 24" fill="none">
+    <path d="M9 18V5l12-2v13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="6" cy="18" r="3" stroke="currentColor" stroke-width="2"/>
+    <circle cx="18" cy="16" r="3" stroke="currentColor" stroke-width="2"/>
+  </svg>
+</button>
+<script>
+(function(){
+  const audio = document.getElementById('bgAudio');
+  const btn = document.getElementById('musicToggle');
+  audio.volume = 0.2;
+
+  function setIcon(playing){ btn.style.opacity = playing ? '1' : '.45'; }
+
+  // try real autoplay; if blocked, start muted then unmute on first interaction
+  audio.play().then(()=>setIcon(true)).catch(()=>{
+    audio.muted = true;
+    audio.play().then(()=>setIcon(false)).catch(()=>{});
+    const unlock = ()=>{
+      audio.muted = false;
+      audio.play().then(()=>setIcon(true)).catch(()=>{});
+      window.removeEventListener('pointerdown', unlock);
+      window.removeEventListener('keydown', unlock);
+      window.removeEventListener('scroll', unlock);
+    };
+    window.addEventListener('pointerdown', unlock, {once:true});
+    window.addEventListener('keydown', unlock, {once:true});
+    window.addEventListener('scroll', unlock, {once:true});
+  });
+
+  btn.addEventListener('click', ()=>{
+    if(audio.paused){ audio.muted = false; audio.play(); setIcon(true); }
+    else { audio.pause(); setIcon(false); }
+  });
+})();
 </script>
 </body>
 </html>

@@ -242,12 +242,12 @@
   .marquee-band{
     background:var(--charcoal); color:var(--ivory); padding:20px 0; overflow:hidden; position:relative;
   }
-  .marquee-track{display:flex; white-space:nowrap; animation:marquee 14s linear infinite;}
+  .marquee-track{display:flex; white-space:nowrap; will-change:transform;}
   .marquee-track span{
     font-family:'Fraunces',serif; font-style:italic; font-size:1.5rem; padding:0 34px; display:flex; align-items:center; gap:34px; color:var(--sand);
   }
   .marquee-track span::after{content:'✦'; color:var(--terracotta); font-style:normal; font-size:1rem;}
-  @keyframes marquee{ from{transform:translateX(0);} to{transform:translateX(-50%);} }
+
 
   /* ---------- reveal utility ---------- */
   .reveal{opacity:0; transform:translateY(38px); transition:opacity .9s var(--ease), transform .9s var(--ease);}
@@ -550,7 +550,7 @@
     <div class="hero-bg-shape"></div>
     <div class="wrap hero-inner">
       <h1 class="hero-title">
-        <span class="word"><span style="padding: 10px;">Nieobiektywny</span></span><span class="word"><span style="padding: 10px;">Fotografia</span></span>
+        <span class="word"><span>Nieobiektywny</span></span><span class="word"><span>Fotografia</span></span>
       </h1>
 
       <div class="hero-signature">
@@ -1059,7 +1059,7 @@ mobileMenu.querySelectorAll('a').forEach(a=>a.addEventListener('click', ()=>{
   burger.classList.remove('open'); mobileMenu.classList.remove('open');
 }));
 
-// ---------- marquee content ----------
+// ---------- marquee content: constant px/s, seamless loop (same speed all devices) ----------
 const words = ['Portret','Rodzinne','Dziecięce','Ślubne','Reportaż','Chrzciny i Komunia','Kobiece / Buduarowe'];
 const track = document.getElementById('marqueeTrack');
 for(let r=0;r<2;r++){
@@ -1069,6 +1069,24 @@ for(let r=0;r<2;r++){
     track.appendChild(s);
   });
 }
+(function(){
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const SPEED = 90; // px/s, constant across all viewports
+  let half = track.scrollWidth / 2;
+  window.addEventListener('resize', ()=>{ half = track.scrollWidth / 2; });
+  let pos = 0, lastT = performance.now();
+  function frame(t){
+    const dt = Math.min(48, t - lastT);
+    lastT = t;
+    if(!reducedMotion && half > 0){
+      pos -= SPEED * (dt / 1000);
+      while(pos <= -half) pos += half;
+    }
+    track.style.transform = `translate3d(${pos}px,0,0)`;
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
 
 // ---------- scroll reveal ----------
 const observer = new IntersectionObserver((entries)=>{

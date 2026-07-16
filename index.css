@@ -1,0 +1,229 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+:root {
+  --bg: #060a06;
+  --panel: #0b120c;
+  --panel-alt: #0e160f;
+  --border: #1a3320;
+  --border-bright: #2a5c38;
+  --green: #4dff8f;
+  --green-bright: #aeffca;
+  --green-dim: #2ea656;
+  --text: #b9e8c4;
+  --text-dim: #4d7358;
+  --danger: #ff5566;
+  --font: 'JetBrains Mono', 'Courier New', monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ambient grid + vignette */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(77,255,143,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(77,255,143,0.05) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: radial-gradient(circle at center, black, transparent 75%);
+  pointer-events: none;
+}
+
+/* CRT scanlines + flicker, the signature element */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0,0,0,0) 0px,
+    rgba(0,0,0,0) 2px,
+    rgba(0,0,0,0.18) 3px
+  );
+  pointer-events: none;
+  animation: flicker 6s infinite steps(60);
+  z-index: 5;
+}
+
+@keyframes flicker {
+  0%, 96%, 100% { opacity: 1; }
+  97% { opacity: 0.86; }
+  98% { opacity: 1; }
+  99% { opacity: 0.92; }
+}
+
+form {
+  background: linear-gradient(180deg, var(--panel), var(--panel-alt));
+  border: 1px solid var(--border-bright);
+  border-radius: 4px;
+  padding: 0;
+  width: 300px;
+  max-width: 100%;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,0.5),
+    0 12px 40px rgba(0,0,0,0.7),
+    0 0 30px rgba(77,255,143,0.08);
+  position: relative;
+  z-index: 1;
+  font-size: 13px;
+}
+
+/* terminal titlebar */
+form::before {
+  content: "TICKET-GEN";
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #08110a;
+  color: var(--text-dim);
+  font-size: 10px;
+  letter-spacing: 1px;
+  padding: 7px 14px;
+  border-bottom: 1px solid var(--border);
+  border-radius: 4px 4px 0 0;
+}
+
+form::after {
+  content: "";
+  display: block;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--green-dim), transparent);
+  opacity: 0.6;
+}
+
+.field-wrap, form > label, form > input, form > select, form > button, form > span {
+  margin-left: 16px;
+  margin-right: 16px;
+}
+
+label {
+  display: block;
+  color: var(--green);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-top: 12px;
+  margin-bottom: 5px;
+  width: calc(100% - 32px);
+}
+
+label::before {
+  content: "$ ";
+  color: var(--text-dim);
+}
+
+input, select {
+  width: calc(100% - 32px);
+  background: #050a06;
+  border: 1px solid var(--border);
+  color: var(--green-bright);
+  font-family: var(--font);
+  font-size: 12px;
+  padding: 7px 9px;
+  border-radius: 2px;
+  outline: none;
+  transition: border-color .15s, box-shadow .15s, background .15s;
+}
+
+input::placeholder { color: var(--text-dim); }
+
+input:hover, select:hover { border-color: var(--border-bright); }
+
+input:focus, select:focus {
+  border-color: var(--green);
+  background: #06120a;
+  box-shadow: 0 0 0 1px var(--green-dim), 0 0 18px rgba(77,255,143,0.25);
+}
+
+select {
+  appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--green) 50%),
+    linear-gradient(135deg, var(--green) 50%, transparent 50%);
+  background-position: calc(100% - 18px) center, calc(100% - 13px) center;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+button#generate {
+  display: block;
+  width: calc(100% - 32px);
+  margin-top: 16px;
+  margin-bottom: 16px;
+  background: transparent;
+  color: var(--green);
+  border: 1px solid var(--green-dim);
+  padding: 9px;
+  font-family: var(--font);
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  cursor: pointer;
+  border-radius: 2px;
+  position: relative;
+  transition: color .15s, box-shadow .15s;
+}
+
+button#generate::before { content: "> "; }
+button#generate::after {
+  content: "_";
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+button#generate:hover {
+  color: var(--bg);
+  background: var(--green);
+  box-shadow: 0 0 24px rgba(77,255,143,0.45);
+}
+
+button#generate:active { transform: scale(0.98); }
+
+#output {
+  display: block;
+  margin: 0 16px 16px;
+  padding: 8px 10px;
+  background: #040805;
+  border: 1px dashed var(--border-bright);
+  border-radius: 2px;
+  color: var(--green-bright);
+  font-size: 11px;
+  min-height: 16px;
+  word-break: break-word;
+  white-space: pre-wrap;
+  width: calc(100% - 32px);
+}
+
+#output:empty { display: none; }
+#output:not(:empty)::before { content: "> "; color: var(--text-dim); }
+
+::selection { background: var(--green-dim); color: #04140a; }
+
+@media (max-width: 480px) {
+  form { width: 100%; }
+}

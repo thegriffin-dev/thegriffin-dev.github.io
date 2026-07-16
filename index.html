@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Generate Common Tickets</title>
+    <link rel="stylesheet" href="index.css">
+
+  </head>
+  <body>
+    <form class="" action="" method="post">
+      <!--Pick the incydent type-->
+      <label for="">Type</label>
+      <select class="" id="incType" name="">
+        <option value="Lot">Lot discrepancy</option>
+        <option value="Hold">Hold discrepancy</option>
+        <option value="Print">Printer Issues</option>
+        <option value="IonUat">ION Down - UAT</option>
+      </select>
+
+      <!--Set the value u set inc for-->
+      <label for="">Storer</label>
+      <input type="text" id="storer" name="" value="">
+
+      <label for="">Order</label>
+      <input type="text" id="orderNum" name="" value="">
+
+      <label for="">Value</label>
+      <input type="text" id="incValue" name="" value="">
+
+      <button type="button" id="generate" name="button">Generate Ticket</button>
+
+      <span id="output"></span>
+    </form>
+
+
+
+    <script src="index.js" charset="utf-8"></script>
+  </body>
+</html>
